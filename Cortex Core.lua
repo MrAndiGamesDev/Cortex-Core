@@ -1,16 +1,21 @@
 local USESDSD = game.Players.LocalPlayer.UserId
 
-local PinDUYNX = 331883747
+local PinDUYNX = 331883747 --Put pin in here, replace 0 with your pin.
+
+local function SendNotification(title,text,duration,...)
+	game.StarterGui:SetCore("SendNotification", {
+		Title = title;
+		Text = text;
+		Icon = "";
+		Duration = duration;
+	})
+end
 
 function Authenticate(PSPDAS,UYSESE)
     if PSPDAS == UYSESE then
-        
-        local notLoaded = Instance.new("Message", game:GetService("CoreGui"))
-    	notLoaded.Text = 'Cortex has been Authenticated!'
-    	wait(5)
-    	notLoaded:Destroy()
-    	
        return true
+    else
+        return false
     end    
 end    
 
@@ -30,7 +35,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '1.5'
+ver = '1.6'
 
 Players = game:GetService("Players")
 
@@ -3994,7 +3999,7 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 		if #scroll_2:GetChildren() > 0 then
 			notify("Loading",'Hold on a sec')
 			local placeName = CleanFileName(game:GetService('MarketplaceService'):GetProductInfo(game.PlaceId).Name)
-			local writelogs = '-- Infinite Yield Chat logs for "'..placeName..'"\n'
+			local writelogs = '-- Cortex Chat logs for "'..placeName..'"\n'
 			for _, child in pairs(scroll_2:GetChildren()) do
 				writelogs = writelogs..'\n'..child.Text
 			end
@@ -7122,7 +7127,6 @@ end)
 
 CFspeed = 50
 addcmd('cframefly', {'cfly'}, function(args, speaker)
-	--Full credit to peyton#9148
 	speaker.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
 	local Head = speaker.Character:WaitForChild("Head")
 	Head.Anchored = true
@@ -9082,7 +9086,6 @@ invisRunning = false
 addcmd('invisible',{'invis'},function(args, speaker)
 	if invisRunning then return end
 	invisRunning = true
-	-- Full credit to AmokahFox @V3rmillion
 	local Player = speaker
 	repeat wait(.1) until Player.Character
 	local Character = Player.Character
@@ -9376,7 +9379,6 @@ end)
 
 addcmd('nohead',{'rhead','headless'},function(args, speaker)
 	if sethidden then
-		-- Full credit to Thomas_Cornez#0272 @Discord
 		local lplr = Players.LocalPlayer
 		local char = lplr.Character
 		local rig = tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R6" and 1 or tostring(char:FindFirstChildOfClass('Humanoid').RigType) == "Enum.HumanoidRigType.R15" and 2
@@ -9569,7 +9571,6 @@ end)
 addcmd('edgejump',{'ejump'},function(args, speaker)
 	local Char = speaker.Character
 	local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
-	-- Full credit to NoelGamer06 @V3rmillion
 	local state
 	local laststate
 	local lastcf
@@ -10011,7 +10012,6 @@ addcmd('deleteselectedtool',{'dst'},function(args, speaker)
 end)
 
 addcmd('console',{},function(args, speaker)
-	-- Thanks wally!!
 	notify("Loading",'Hold on a sec')
 	local _, str = pcall(function()
 		return game:HttpGet("https://gist.githubusercontent.com/luatsuki/a1b48e02d5710ebff8fe1ffb1fc5ea38/raw/055143d9238eb6645fbb1f5c4a9a0122ca90c8f4/Console", true)
@@ -10084,14 +10084,13 @@ addcmd('explorer',{'dex'},function(args, speaker)
 end)
 
 addcmd('remotespy',{'rspy'},function(args, speaker)
-	notify("Loading",'Hold on a sec')
-	-- Full credit to exx, creator of SimpleSpy
-	-- also thanks to NoobSploit for fixing
+	notify("Loading",'Please wait.')
+
 	loadstring(game:HttpGet("https://gist.githubusercontent.com/Toon-arch/8f5af8403ca5dabad30763ab2b1cf8d0/raw/87d9847dd85850777e691e46d0c52f9020b42ee2/spy"))()
 end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
-	notify("Loading",'Hold on a sec')
+	notify("Loading",'Please wait.')
 	loadstring(game:HttpGet(('https://pastebin.com/raw/GmbrsEjM'),true))()
 end)
 
@@ -12246,9 +12245,13 @@ end
 
 IYMouse.Move:Connect(checkTT)
 
+SendNotification("Cortex Startup","Cortex has been confirmed!",5)
+wait(5)
+SendNotification("Cortex Welcome","Welcome, "..game.Players.LocalPlayer.Name.."!",5)
+wait(5)
+SendNotification("Cortex Complete","Cortex is now loaded.",4)
+wait(4)
 
-
-wait()
 Credits:TweenPosition(UDim2.new(0,0,0.9,0), "Out", "Quart", 0.2)
 Logo:TweenSizeAndPosition(UDim2.new(0,175,0,175), UDim2.new(0,37,0,45), "Out", "Quart", 0.3)
 wait(1)
@@ -12257,15 +12260,16 @@ for i=0,1,0.1 do
 	IntroBackground.BackgroundTransparency = i
 	wait()
 end
-Credits:TweenPosition(UDim2.new(0,0,0.9,30), "Out", "Quart", 0.2)
-wait(0.2)
-Logo:Destroy()
-Credits:Destroy()
-IntroBackground:Destroy()
-minimizeHolder()
+    Credits:TweenPosition(UDim2.new(0,0,0.9,30), "Out", "Quart", 0.2)
+    wait(0.2)
+    Logo:Destroy()
+    Credits:Destroy()
+    IntroBackground:Destroy()
+    minimizeHolder()
 else
-    local notLoaded = Instance.new("Message", game:GetService("CoreGui"))
-    notLoaded.Text = 'Unable to Authenticate!'
-	wait(5)
-    notLoaded:Destroy()
+    
+    SendNotification("Cortex Shutdown","Cortex has not been confirmed.",5)
+    wait(5)
+    SendNotification("Cortex Shutdown","Cortex is now shutting down.",4)
+    
 end
