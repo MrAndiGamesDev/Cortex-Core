@@ -2972,7 +2972,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 	currentShade2 = Color3.fromRGB(0, 0, 0)
 	currentShade3 = Color3.fromRGB(0, 0, 0)
 	currentText1 = Color3.new(1, 1, 1)
-	currentText2 = Color3.new(0, 0, 0)
+	currentText2 = Color3.new(1, 1, 1)
 	currentScroll = Color3.fromRGB(0,0,0)
 
 	defaultsettings = {
@@ -3006,10 +3006,10 @@ if Authenticate(USESDSD,PinDUYNX) then
 	local loadedEventData = nil
 	function saves()
 		if writefileExploit() then
-			if pcall(function() readfile("IY_FE." .. fileExtension) end) then
-				if readfile("IY_FE." .. fileExtension) ~= nil then
+			if pcall(function() readfile("Core." .. fileExtension) end) then
+				if readfile("Core." .. fileExtension) ~= nil then
 					local success, response = pcall(function()
-						local json = game:GetService("HttpService"):JSONDecode(readfile("IY_FE." .. fileExtension))
+						local json = game:GetService("HttpService"):JSONDecode(readfile("Core." .. fileExtension))
 						if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
 						if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
 						if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = true end
@@ -3031,19 +3031,19 @@ if Authenticate(USESDSD,PinDUYNX) then
 					if not success then
 						warn("Save Json Error:", response)
 						warn("Overwriting Save File")
-						writefileCooldown("IY_FE." .. fileExtension, defaults)
+						writefileCooldown("Core." .. fileExtension, defaults)
 						wait()
 						saves()
 					end
 				else
-					writefileCooldown("IY_FE." .. fileExtension, defaults)
+					writefileCooldown("Core." .. fileExtension, defaults)
 					wait()
 					saves()
 				end
 			else
-				writefileCooldown("IY_FE." .. fileExtension, defaults)
+				writefileCooldown("Core." .. fileExtension, defaults)
 				wait()
-				if pcall(function() readfile("IY_FE." .. fileExtension) end) then
+				if pcall(function() readfile("Core." .. fileExtension) end) then
 					saves()
 				else
 					nosaves = true
@@ -3171,7 +3171,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 				currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B};
 				eventBinds = eventEditor.SaveData()
 			}
-			writefileCooldown("IY_FE." .. fileExtension, game:GetService("HttpService"):JSONEncode(update))
+			writefileCooldown("Core." .. fileExtension, game:GetService("HttpService"):JSONEncode(update))
 		end
 	end
 
@@ -4827,8 +4827,8 @@ if Authenticate(USESDSD,PinDUYNX) then
 	CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
 	CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
 	CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
-	CMDs[#CMDs + 1] = {NAME = 'grab', DESC = 'Makes your character grab someone'}
-
+	CMDs[#CMDs + 1] = {NAME = 'grab', DESC = 'Makes your character attach to someone'}
+	CMDs[#CMDs + 1] = {NAME = 'scan', DESC = 'Scan players for scripts if suspected of exploiting'}
 	wait()
 
 	for i = 1, #CMDs do
@@ -6221,7 +6221,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 	PluginsGUI = PluginEditor.background
 
 	function addPlugin(name)
-		if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.' .. fileExtension or name == 'iy_fe' then
+		if name:lower() == 'plugin file name' or name:lower() == 'Cortex.' .. fileExtension or name == 'Cortex' then
 			notify('Plugin Error','Please enter a valid plugin')
 		else
 			local file
@@ -10154,7 +10154,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 		local cString = getstring(1)
 		game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(cString, "All")
 	end)
-
+	
 	spamming = false
 	spamspeed = 1
 	addcmd('spam',{},function(args, speaker)
@@ -11406,21 +11406,44 @@ if Authenticate(USESDSD,PinDUYNX) then
 			notify('Tool Required','You need to have a tool in your inventory to use this command')
 		end
 	end
-
+    function scanplayer(speaker,target)
+        
+        local TargetCharacter = target.Character
+        
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Starting scan on "..TargetCharacter.Name..":", "All")
+        wait(0.5)
+	    for index,Part in pairs(TargetCharacter:GetDescendants()) do
+	        if Part:IsA("Script") then
+	            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("FoundScript: "..Part.Name.." found in "..Part.Parent.Name, "All")
+	            wait(0.75)
+	        end
+	        if Part:IsA("Tool") then
+	            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Tool found in Player:", "All")
+	            wait(0.5)
+	            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Tool found: "..Part.Name.." found in "..Part.Parent.Name, "All")
+	            wait(0.5)
+	        end     
+	    end
+    	game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer("Scan Completed!", "All")
+    end    
 	addcmd('attach',{},function(args, speaker)
 		local players = getPlayer(args[1], speaker)
 		for i,v in pairs(players) do
 			attach(speaker,Players[v])
 		end
 	end)
-
+	addcmd('scan',{},function(args,speaker)
+		local players = getPlayer(args[1], speaker)
+		for i,v in pairs(players) do
+			scanplayer(speaker,Players[v])
+		end	   
+	end)    
 	addcmd('grab',{},function(args, speaker)
 		local players = getPlayer(args[1], speaker)
 		for i,v in pairs(players) do
 			attach2(speaker,Players[v])
 		end
 	end)
-
 	function kill(speaker,target,fast)
 		if tools(speaker) then
 			if target ~= nil then
@@ -11451,7 +11474,6 @@ if Authenticate(USESDSD,PinDUYNX) then
 			kill(speaker,Players[v])
 		end
 	end)
-
 	addcmd('handlekill', {'hkill'}, function(args, speaker)
 		if not firetouchinterest then
 			return notify('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
