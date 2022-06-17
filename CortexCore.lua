@@ -1,6 +1,6 @@
 local USESDSD = game.Players.LocalPlayer.UserId
 
-local PinDUYNX = 331883747 --Put pin in here, replace 0 with your pin.
+local PinDUYNX = --Put pin in here, replace 0 with your pin.
 
 local function SendNotification(title,text,duration,...)
 	game.StarterGui:SetCore("SendNotification", {
@@ -22,9 +22,7 @@ end
 if Authenticate(USESDSD,PinDUYNX) then
 SendNotification("Cortex Startup","Cortex has been confirmed!",5)
 wait(5)
-SendNotification("Cortex Welcome","Welcome, "..game.Players.LocalPlayer.Name.."!",5)
-wait(5)
-SendNotification("Cortex Complete","Cortex is now loaded.",4)
+SendNotification("Cortex Complete","Cortex is now running.",4)
 wait(4)
 if IY_LOADED and not _G.IY_DEBUG == true then
 	error("Cortex is already running!",0)
@@ -40,7 +38,7 @@ if not game:IsLoaded() then
 	notLoaded:Destroy()
 end
 
-ver = '1.6'
+ver = '1.7'
 
 Players = game:GetService("Players")
 
@@ -616,7 +614,7 @@ Logo.BackgroundTransparency = 1
 Logo.BorderSizePixel = 0
 Logo.Position = UDim2.new(0, 125, 0, 127)
 Logo.Size = UDim2.new(0, 10, 0, 10)
-Logo.Image = "rbxassetid://8053465511"
+Logo.Image = "rbxassetid://9938755882"
 Logo.ImageTransparency = 0
 Logo.ZIndex = 10
 
@@ -4829,6 +4827,8 @@ CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you t
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
 CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
 CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
+CMDs[#CMDs + 1] = {NAME = 'grab', DESC = 'Makes your character grab someone'}
+
 wait()
 
 for i = 1, #CMDs do
@@ -11349,6 +11349,35 @@ addcmd('invisfling',{},function(args, speaker)
 	bambam.Location = getRoot(speaker.Character).Position
 end)
 
+function attach2(speaker,target)
+	if tools(speaker) then
+		local char = speaker.Character
+		local tchar = target.Character
+		local hum = speaker.Character:FindFirstChildOfClass("Humanoid")
+		local hrp = getRoot(speaker.Character)
+		local hrp2 = getRoot(target.Character)
+		hum.Name = "1"
+		local newHum = hum:Clone()
+		hum:Destroy()
+		newHum.Parent = char
+		newHum.Name = "Humanoid"
+		wait()
+		workspace.CurrentCamera.CameraSubject = char
+		newHum.DisplayDistanceType = "None"
+		local tool = speaker:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass("Tool") or speaker.Character:FindFirstChildOfClass("Tool")
+		tool.Parent = char
+		hrp.CFrame = hrp2.CFrame * CFrame.new(0, 0, 0) * CFrame.new(math.random(-100, 100)/200,math.random(-100, 100)/200,math.random(-100, 100)/200)
+		local n = 0
+		repeat
+			wait(.1)
+			n = n + 1
+			hrp.CFrame = hrp2.CFrame
+		until not tchar or not char
+	else
+		notify('Tool Required','You need to have a tool in your inventory to use this command')
+	end
+end
+
 function attach(speaker,target)
 	if tools(speaker) then
 		local char = speaker.Character
@@ -11374,7 +11403,7 @@ function attach(speaker,target)
 			hrp.CFrame = hrp2.CFrame
 		until (tool.Parent ~= char or not hrp or not hrp2 or not hrp.Parent or not hrp2.Parent or n > 250) and n > 2
 	else
-		notify('Tool Required','You need to have an item in your inventory to use this command')
+		notify('Tool Required','You need to have a tool in your inventory to use this command')
 	end
 end
 
@@ -11382,6 +11411,13 @@ addcmd('attach',{},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		attach(speaker,Players[v])
+	end
+end)
+
+addcmd('grab',{},function(args, speaker)
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		attach2(speaker,Players[v])
 	end
 end)
 
@@ -12250,16 +12286,17 @@ end
 
 IYMouse.Move:Connect(checkTT)
 
-Credits:TweenPosition(UDim2.new(0,0,0.9,0), "Out", "Quart", 0.2)
-Logo:TweenSizeAndPosition(UDim2.new(0,175,0,175), UDim2.new(0,37,0,45), "Out", "Quart", 0.3)
+Credits:TweenPosition(UDim2.new(0,0,0.9,0), "Out", "Quart", 0.5)
+Logo:TweenSizeAndPosition(UDim2.new(0,175,0,175), UDim2.new(0,37,0,45), "Out", "Quart", 0.5)
 wait(1)
+Credits.Text = "Welcome, "..game.Players.LocalPlayer.Name.."!"
 for i=0,1,0.1 do
 	Logo.ImageTransparency = i
 	IntroBackground.BackgroundTransparency = i
 	wait()
 end
-    Credits:TweenPosition(UDim2.new(0,0,0.9,30), "Out", "Quart", 0.2)
-    wait(0.2)
+    Credits:TweenPosition(UDim2.new(0,0,0.9,30), "Out", "Quart", 0.75)
+    wait(0.75)
     Logo:Destroy()
     Credits:Destroy()
     IntroBackground:Destroy()
