@@ -2973,7 +2973,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 	currentShade3 = Color3.fromRGB(0, 0, 0)
 	currentText1 = Color3.new(1, 1, 1)
 	currentText2 = Color3.new(0, 0, 0)
-	currentScroll = Color3.fromRGB(78,78,79)
+	currentScroll = Color3.fromRGB(0,0,0)
 
 	defaultsettings = {
 		prefix = ';';
@@ -3076,7 +3076,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 					background.Name = "background"
 					background.Parent = FileError
 					background.Active = true
-					background.BackgroundColor3 = Color3.fromRGB(36, 36, 37)
+					background.BackgroundColor3 = Color3.fromRGB(0,0,0)
 					background.BorderSizePixel = 0
 					background.Position = UDim2.new(0, 0, 0, 20)
 					background.Size = UDim2.new(0, 360, 0, 205)
@@ -3099,7 +3099,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 
 					shadow.Name = "shadow"
 					shadow.Parent = FileError
-					shadow.BackgroundColor3 = Color3.fromRGB(46, 46, 47)
+					shadow.BackgroundColor3 = Color3.fromRGB(0,0,0)
 					shadow.BorderSizePixel = 0
 					shadow.Size = UDim2.new(0, 360, 0, 20)
 					shadow.ZIndex = 10
