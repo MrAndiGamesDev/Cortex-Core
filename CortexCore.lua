@@ -1,6 +1,29 @@
 local USESDSD = game.Players.LocalPlayer.UserId
 
-local PinDUYNX = --Put your pin here. 
+local PlayerIDS = {
+    
+    3648405109,
+    33350301,
+    331883747,
+   3737575347, 
+   3771386248,
+   425371253,
+   900224493,
+   3510250520
+   
+}
+
+local PunchAnims = {
+	R6 = "rbxassetid://204062532",
+	R15 = "rbxassetid://846744780"
+}
+local PunchR15Anim = Instance.new("Animation")
+local PunchR6Anim = Instance.new("Animation")
+PunchR15Anim.AnimationId = PunchAnims.R15
+PunchR6Anim.AnimationId = PunchAnims.R6
+PunchR15Anim.Parent = game.workspace
+PunchR6Anim.Parent = game.workspace
+local Punching = false
 
 local function SendNotification(title,text,duration,...)
 	game.StarterGui:SetCore("SendNotification", {
@@ -11,19 +34,19 @@ local function SendNotification(title,text,duration,...)
 	})
 end
 
-function Authenticate(PSPDAS,UYSESE)
-	if PSPDAS == UYSESE then
-		return true
-	else
-		return false
-	end    
+function Authenticate(UYSESE)
+    local Identified = false
+    for i,IDS in pairs(PlayerIDS) do
+        if IDS == UYSESE and Identified == false then
+            Identified = true
+        end
+    end    
+	return Identified
 end    
 
-if Authenticate(USESDSD,PinDUYNX) then
-	SendNotification("Cortex Startup","Cortex has been confirmed!",5)
-	wait(5)
+if Authenticate(USESDSD) then
 	SendNotification("Cortex Complete","Cortex is now running.",4)
-	wait(4)
+	wait(5)
 	if IY_LOADED and not _G.IY_DEBUG == true then
 		error("Cortex is already running!",0)
 		return
@@ -38,7 +61,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 		notLoaded:Destroy()
 	end
 
-	ver = '1.7'
+	ver = '2'
 
 	Players = game:GetService("Players")
 
@@ -204,6 +227,9 @@ if Authenticate(USESDSD,PinDUYNX) then
 		syn.protect_gui(Main)
 		Main.Parent = COREGUI
 		PARENT = Main
+		Main.OnTopOfCoreBlur = true
+		Main.DisplayOrder = 100
+
 	elseif get_hidden_gui or gethui then
 		local hiddenUI = get_hidden_gui or gethui
 		local Main = Instance.new("ScreenGui")
@@ -4495,6 +4521,9 @@ if Authenticate(USESDSD,PinDUYNX) then
 	CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 	CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 	CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
+	CMDs[#CMDs + 1] = {NAME = 'Punch', DESC = 'Throw your fists'}
+	CMDs[#CMDs + 1] = {NAME = 'HardPunch', DESC = 'Throw your fists and your opponants'}
+	CMDs[#CMDs + 1] = {NAME = 'GrabPunch', DESC = 'Grab your opponants'}
 	CMDs[#CMDs + 1] = {NAME = 'unnoclip / clip', DESC = 'Disables noclip'}
 	CMDs[#CMDs + 1] = {NAME = 'fly [speed]', DESC = 'Makes you fly'}
 	CMDs[#CMDs + 1] = {NAME = 'unfly', DESC = 'Disables fly'}
@@ -4577,6 +4606,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 	CMDs[#CMDs + 1] = {NAME = 'xray', DESC = 'Makes all parts in workspace transparent'}
 	CMDs[#CMDs + 1] = {NAME = 'unxray / noxray', DESC = 'Restores transparency'}
 	CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
+	CMDs[#CMDs + 1] = {NAME = 'ToggleAnchor', DESC = 'Grab onto walls'}
 	CMDs[#CMDs + 1] = {NAME = 'spectate / view [plr]', DESC = 'View a player'}
 	CMDs[#CMDs + 1] = {NAME = 'viewpart / viewp [part name]', DESC = 'View a part'}
 	CMDs[#CMDs + 1] = {NAME = 'unspectate / unview', DESC = 'Stops viewing player'}
@@ -6937,6 +6967,92 @@ if Authenticate(USESDSD,PinDUYNX) then
 		game:shutdown() 
 	end)
 
+    addcmd('Punch',{},function(args, speaker)
+        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            if Punching == false then
+                Punching = true
+
+                if game.Players.LocalPlayer.Character:FindFirstChild("UpperTorso") then
+                    local PunchAnim = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(PunchR15Anim)
+                    PunchAnim:Play()
+                end
+                if game.Players.LocalPlayer.Character:FindFirstChild("Torso") then
+                    local PunchAnim = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(PunchR6Anim)
+                    PunchAnim:Play()
+                end
+                wait(0.5)
+                Punching = false
+            end    
+        end
+	end)
+    addcmd('HardPunch',{},function(args, speaker)
+        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            if Punching == false then
+                Punching = true
+                if game.Players.LocalPlayer.Character:FindFirstChild("UpperTorso") then
+                    local PunchAnim = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(PunchR15Anim)
+                    PunchAnim:Play()
+                end
+                if game.Players.LocalPlayer.Character:FindFirstChild("Torso") then
+                    local PunchAnim = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(PunchR6Anim)
+                    PunchAnim:Play()
+                end
+                wait(0.5)
+                Punching = false
+                local Target = nil
+                game:GetService("RunService").Heartbeat:Wait()
+                local speakerChar = speaker.Character
+			    if not speakerChar or not getRoot(speakerChar) then return end
+			    local lowest = 20
+			    local NearestPlayer = nil
+			    local Playerslist = game.Players:GetChildren()
+			    for _,plr in pairs(Playerslist) do
+				    if plr ~= speaker and plr.Character then
+					    local distance = plr:DistanceFromCharacter(getRoot(speakerChar).Position)
+					    if distance < lowest then
+						    lowest = distance
+						    NearestPlayer = plr
+					    end
+				    end
+			    end
+                kill(speaker,NearestPlayer,true)
+            end    
+        end
+    end)
+    addcmd('GrabPunch',{},function(args, speaker)
+        if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            if Punching == false then
+                Punching = true
+                if game.Players.LocalPlayer.Character:FindFirstChild("UpperTorso") then
+                    local PunchAnim = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(PunchR15Anim)
+                    PunchAnim:Play()
+                end
+                if game.Players.LocalPlayer.Character:FindFirstChild("Torso") then
+                    local PunchAnim = game.Players.LocalPlayer.Character.Humanoid:LoadAnimation(PunchR6Anim)
+                    PunchAnim:Play()
+                end
+                wait(0.5)
+                Punching = false
+                local Target = nil
+                game:GetService("RunService").Heartbeat:Wait()
+                local speakerChar = speaker.Character
+			    if not speakerChar or not getRoot(speakerChar) then return end
+			    local lowest = 20
+			    local NearestPlayer = nil
+			    local Playerslist = game.Players:GetChildren()
+			    for _,plr in pairs(Playerslist) do
+				    if plr ~= speaker and plr.Character then
+					    local distance = plr:DistanceFromCharacter(getRoot(speakerChar).Position)
+					    if distance < lowest then
+						    lowest = distance
+						    NearestPlayer = plr
+					    end
+				    end
+			    end
+                attach(speaker,NearestPlayer)
+            end    
+        end
+	end)
 	local Noclipping = nil
 	addcmd('noclip',{},function(args, speaker)
 		Clip = false
@@ -7981,7 +8097,27 @@ if Authenticate(USESDSD,PinDUYNX) then
 			viewChanged = workspace.CurrentCamera:GetPropertyChangedSignal("CameraSubject"):Connect(viewChangedFunc)
 		end
 	end)
+	
+	local WallGrab = false
+	
 
+	addcmd('ToggleAnchor',{},function(args, speaker)
+		
+		if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+		    if WallGrab == false then
+		        game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
+		        game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
+		        WallGrab = true
+		        return
+		    else
+		        game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+		        game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+		        WallGrab = false
+		        return
+		    end    
+		       
+		end    
+	end)
 	addcmd('viewpart',{'viewp'},function(args, speaker)
 		StopFreecam()
 		if args[1] then
@@ -8006,8 +8142,6 @@ if Authenticate(USESDSD,PinDUYNX) then
 		end
 		workspace.CurrentCamera.CameraSubject = speaker.Character
 	end)
-
-
 	fcRunning = false
 	local Camera = workspace.CurrentCamera
 	workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
@@ -10090,8 +10224,9 @@ if Authenticate(USESDSD,PinDUYNX) then
 
 	addcmd('remotespy',{'rspy'},function(args, speaker)
 		notify("Loading",'Please wait.')
-
-		loadstring(game:HttpGet("https://gist.githubusercontent.com/Toon-arch/8f5af8403ca5dabad30763ab2b1cf8d0/raw/87d9847dd85850777e691e46d0c52f9020b42ee2/spy"))()
+		local GUINEW = loadstring(game:HttpGet("https://gist.githubusercontent.com/Toon-arch/8f5af8403ca5dabad30763ab2b1cf8d0/raw/87d9847dd85850777e691e46d0c52f9020b42ee2/spy"))()
+	    GUINEW.Parent = PARENT
+	    
 	end)
 
 	addcmd('audiologger',{'alogger'},function(args, speaker)
@@ -11301,6 +11436,14 @@ if Authenticate(USESDSD,PinDUYNX) then
 		end
 	end)
 
+	addcmd('togglefling',{},function(args, speaker)
+		if not Punching then
+			execCmd('unfling')
+		else
+			execCmd('fling')
+		end
+	end)
+
 	addcmd('invisfling',{},function(args, speaker)
 		local ch = speaker.Character
 		local prt=Instance.new("Model")
@@ -11444,6 +11587,7 @@ if Authenticate(USESDSD,PinDUYNX) then
 			attach2(speaker,Players[v])
 		end
 	end)
+	
 	function kill(speaker,target,fast)
 		if tools(speaker) then
 			if target ~= nil then
@@ -11867,13 +12011,11 @@ if Authenticate(USESDSD,PinDUYNX) then
 			stareLoop = game:GetService("RunService").RenderStepped:Connect(stareFunc)
 		end
 	end)
-
 	addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
 		if stareLoop then
 			stareLoop:Disconnect()
 		end
 	end)
-
 	local RolewatchData = {["Group"]=0,["Role"]="",["Leave"]=false}
 	local RolewatchConnection = Players.PlayerAdded:Connect(function(player)
 		if RolewatchData.Group == 0 then return end
